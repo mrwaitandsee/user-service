@@ -5,13 +5,11 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
 @Setter
-public class InputUserDto {
+@Getter
+public class AuthenticationRequestDto {
     @NotBlank
-    private String uname;
-    @NotBlank
-    private String email;
+    private String userId;
     @NotBlank
     private String password;
 }
