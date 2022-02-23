@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class AuthenticationResponseDto {
+public class ActionResponseDto {
     private Boolean success;
     private String message;
 }

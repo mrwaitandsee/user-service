@@ -2,14 +2,16 @@ package builder.userservice.service;
 
 import builder.userservice.dto.UserRequestDto;
 import builder.userservice.dto.UserResponseDto;
+import builder.userservice.dto.ActionResponseDto;
 import builder.userservice.dto.AuthenticationRequestDto;
-import builder.userservice.dto.AuthenticationResponseDto;
+import builder.userservice.dto.ChangePasswordRequestDto;
 
 import builder.userservice.entity.User;
 import builder.userservice.entity.UserSecret;
 import builder.userservice.entity.PasswordSecret;
 
 import builder.userservice.repository.UserRepository;
+import builder.userservice.repository.PasswordSecretRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class UserService {
     private final CryptoService cryptoService;
     private final UserRepository userRepository;
+    private final PasswordSecretRepository passwordSecretRepository;
 
     public UserResponseDto getUserById(UUID id) {
         var user = userRepository.findByIdEquals(id.toString());
@@ -63,7 +66,7 @@ public class UserService {
         return new UserResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
     }
 
-    public AuthenticationResponseDto authentication(AuthenticationRequestDto authenticationRequestDto) {
+    public ActionResponseDto authentication(AuthenticationRequestDto authenticationRequestDto) {
         try {
             var user = userRepository.getById(authenticationRequestDto.getUserId());
             var passwordSecrets = user.getUserSecret().getPasswordSecretList();
@@ -72,12 +75,40 @@ public class UserService {
                 var hashedPassword = passwordSecret.getPassword();
 
                 if (cryptoService.compareHash(authenticationRequestDto.getPassword(), hashedPassword))
-                    return new AuthenticationResponseDto(true, "Authentication passed successfully.");
+                    return new ActionResponseDto(true, "Authentication passed successfully.");
             }
 
-            return new AuthenticationResponseDto(false, "Authentication failed. Incorrect password.");
+            return new ActionResponseDto(false, "Authentication failed. Incorrect password.");
         } catch (Exception e) {
-            return new AuthenticationResponseDto(false, "Authentication failed. User not found.");
+            return new ActionResponseDto(false, "Authentication failed. User not found.");
+        }
+    }
+
+    public ActionResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
+        try {
+            var user = userRepository.getById(changePasswordRequestDto.getUserId());
+            var passwordSecrets = user.getUserSecret().getPasswordSecretList();
+
+            for (PasswordSecret passwordSecret : passwordSecrets) {
+                var hashedPassword = passwordSecret.getPassword();
+
+                if (cryptoService.compareHash(changePasswordRequestDto.getOldPassword(), hashedPassword)) {
+                    var newHash = cryptoService.getHash(changePasswordRequestDto.getNewPassword());
+
+                    passwordSecretRepository.save(
+                            PasswordSecret.builder()
+                                    .id(passwordSecret.getId())
+                                    .password(newHash)
+                                    .build()
+                    );
+
+                    return new ActionResponseDto(true, "Password has been changed.");
+                }
+            }
+
+            return new ActionResponseDto(false, "Can't change password. Incorrect password.");
+        } catch (Exception e) {
+            return new ActionResponseDto(false, "Can't change password. User not found.");
         }
     }
 }

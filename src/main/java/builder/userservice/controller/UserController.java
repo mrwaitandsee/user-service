@@ -4,13 +4,15 @@ package builder.userservice.controller;
  *
  *      curl -X POST http://localhost:8080/api/v1/user-management/registration -H 'Content-Type: application/json' -d '{ "uname":"mrkingofspades", "email":"mrkingofspades@gmail.com", "password": "pass123" }'
  *      curl -X POST http://localhost:8080/api/v1/user-management/authentication -H 'Content-Type: application/json' -d '{ "userId":"9b1bab6d-7387-4143-ae44-b52ad9ef8e37", "password":"pass123" }'
+ *      curl -X POST http://localhost:8080/api/v1/user-management/change-password -H 'Content-Type: application/json' -d '{ "userId":"9b1bab6d-7387-4143-ae44-b52ad9ef8e37", "oldPassword": "pass123", "newPassword":"pass1234" }'
  *
  */
 
+import builder.userservice.dto.ChangePasswordRequestDto;
 import builder.userservice.dto.UserRequestDto;
 import builder.userservice.dto.UserResponseDto;
 import builder.userservice.dto.AuthenticationRequestDto;
-import builder.userservice.dto.AuthenticationResponseDto;
+import builder.userservice.dto.ActionResponseDto;
 
 import builder.userservice.service.UserService;
 
@@ -61,8 +63,14 @@ public class UserController {
 
     @Validated
     @PostMapping(path = "/authentication")
-    private AuthenticationResponseDto authentication(@Valid @RequestBody AuthenticationRequestDto authenticationRequestDto) {
+    private ActionResponseDto authentication(@Valid @RequestBody AuthenticationRequestDto authenticationRequestDto) {
         return userService.authentication(authenticationRequestDto);
+    }
+
+    @Validated
+    @PostMapping(path = "/change-password")
+    private ActionResponseDto changePassword(@Valid @RequestBody ChangePasswordRequestDto changePasswordRequestDto) {
+        return userService.changePassword(changePasswordRequestDto);
     }
 
     // TODO change password of user
