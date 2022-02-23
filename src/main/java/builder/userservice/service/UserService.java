@@ -1,8 +1,8 @@
 package builder.userservice.service;
 
-import builder.userservice.dto.UserRequestDto;
-import builder.userservice.dto.UserResponseDto;
 import builder.userservice.dto.ActionResponseDto;
+import builder.userservice.dto.RegistrationRequestDto;
+import builder.userservice.dto.RegistrationResponseDto;
 import builder.userservice.dto.AuthenticationRequestDto;
 import builder.userservice.dto.ChangePasswordRequestDto;
 
@@ -26,27 +26,27 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordSecretRepository passwordSecretRepository;
 
-    public UserResponseDto getUserById(UUID id) {
+    public RegistrationResponseDto getUserById(UUID id) {
         var user = userRepository.findByIdEquals(id.toString());
-        return new UserResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
+        return new RegistrationResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
     }
 
-    public UserResponseDto getUserByUname(String uname) {
+    public RegistrationResponseDto getUserByUname(String uname) {
         var user = userRepository.findByUnameEquals(uname);
-        return new UserResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
+        return new RegistrationResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
     }
 
-    public UserResponseDto getUserByEmail(String email) {
+    public RegistrationResponseDto getUserByEmail(String email) {
         var user = userRepository.findByEmailEquals(email);
-        return new UserResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
+        return new RegistrationResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
     }
 
-    public UserResponseDto registration(UserRequestDto userRequestDto) {
-        var hash = cryptoService.getHash(userRequestDto.getPassword());
+    public RegistrationResponseDto registration(RegistrationRequestDto registrationRequestDto) {
+        var hash = cryptoService.getHash(registrationRequestDto.getPassword());
         var user = User.builder()
                 .id(UUID.randomUUID().toString())
-                .uname(userRequestDto.getUname())
-                .email(userRequestDto.getEmail())
+                .uname(registrationRequestDto.getUname())
+                .email(registrationRequestDto.getEmail())
                 .userSecret(
                         UserSecret.builder()
                                 .id(UUID.randomUUID().toString())
@@ -63,7 +63,7 @@ public class UserService {
 
         userRepository.saveAndFlush(user);
 
-        return new UserResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
+        return new RegistrationResponseDto(UUID.fromString(user.getId()), user.getUname(), user.getEmail());
     }
 
     public ActionResponseDto authentication(AuthenticationRequestDto authenticationRequestDto) {

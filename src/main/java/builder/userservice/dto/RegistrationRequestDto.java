@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-public class UserRequestDto {
+public class RegistrationRequestDto {
     @NotBlank
     private String uname;
     @NotBlank

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class UserResponseDto {
+public class RegistrationResponseDto {
     private UUID id;
     private String uname;
     private String email;

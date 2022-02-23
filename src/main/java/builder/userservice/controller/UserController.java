@@ -8,11 +8,11 @@ package builder.userservice.controller;
  *
  */
 
-import builder.userservice.dto.ChangePasswordRequestDto;
-import builder.userservice.dto.UserRequestDto;
-import builder.userservice.dto.UserResponseDto;
-import builder.userservice.dto.AuthenticationRequestDto;
 import builder.userservice.dto.ActionResponseDto;
+import builder.userservice.dto.RegistrationRequestDto;
+import builder.userservice.dto.RegistrationResponseDto;
+import builder.userservice.dto.AuthenticationRequestDto;
+import builder.userservice.dto.ChangePasswordRequestDto;
 
 import builder.userservice.service.UserService;
 
@@ -39,26 +39,26 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(path = "/users/{user-id}")
-    private UserResponseDto getUserById(@PathVariable(name = "user-id") UUID id) {
+    private RegistrationResponseDto getUserById(@PathVariable(name = "user-id") UUID id) {
         return userService.getUserById(id);
     }
 
     @GetMapping(path = "/users/uname/{uname}")
-    private UserResponseDto getUserByUname(@PathVariable(name = "uname") String uname) {
+    private RegistrationResponseDto getUserByUname(@PathVariable(name = "uname") String uname) {
         return userService.getUserByUname(uname);
     }
 
     @Validated
     @GetMapping(path = "/users/email/{email}")
-    private UserResponseDto getUserByEmail(@PathVariable(name = "email") @Valid @Email String email) {
+    private RegistrationResponseDto getUserByEmail(@PathVariable(name = "email") @Valid @Email String email) {
         return userService.getUserByEmail(email);
     }
 
 
     @Validated
     @PostMapping(path = "/registration")
-    private UserResponseDto registration(@Valid @RequestBody UserRequestDto userRequestDto) {
-        return userService.registration(userRequestDto);
+    private RegistrationResponseDto registration(@Valid @RequestBody RegistrationRequestDto registrationRequestDto) {
+        return userService.registration(registrationRequestDto);
     }
 
     @Validated
@@ -72,8 +72,7 @@ public class UserController {
     private ActionResponseDto changePassword(@Valid @RequestBody ChangePasswordRequestDto changePasswordRequestDto) {
         return userService.changePassword(changePasswordRequestDto);
     }
-
-    // TODO change password of user
+    
     // TODO add password to user
     // TODO remove password from user
     // TODO connect user secret
